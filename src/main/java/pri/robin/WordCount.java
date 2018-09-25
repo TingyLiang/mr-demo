@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class WordCount {
+    /**
+     * 此处的泛型参数，需要根据实际情况指定，以便在map阶段得到合适的输入和输出
+     */
     public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
         private IntWritable one = new IntWritable(1);
         private Text word = new Text();
@@ -62,12 +65,15 @@ public class WordCount {
         }
     }
 
+    /**
+     * 同map阶段相同，泛型参数需要根据业务需求进行确定，以便得到合适的输出
+     */
     public static class MyReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
         @Override
         protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
             for (IntWritable item : values) {
-                //此处可能存在经过本地combine进行数据合并，因此不能单纯进行+1操作
+                //此处可能经过本地combine进行数据合并，因此不能单纯进行+1操作
                 sum += item.get();
             }
             context.write(key, new IntWritable(sum));
